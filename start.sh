@@ -46,6 +46,7 @@ elif [[ "$FUPRCOM" = "update" ]]; then
     echo "[fupr] Updating $FUPROSV"
     sudo dnf upgrade --refresh
 elif [[ "$FUPRCOM" = "schedule" ]]; then
+    echo "[fupr] Checking schedule"
     FUPRBTV=$(lynx -dump -nolist https://fedoraproject.org/wiki/Schedule | sed -r 's/^\s+//g' | grep -E 'Fedora [0-9]{2} Schedule' | grep -E -o 'Fedora [0-9]{2}')
     FUPRBTD=$(lynx -dump -nolist https://fedoraproject.org/wiki/Schedule | sed -r 's/^\s+//g' | grep 'Beta Release' | grep -E -o '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
     echo "$FUPRBTV Beta is scheduled for release on $FUPRBTD."
