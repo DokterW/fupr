@@ -16,10 +16,14 @@ _schedule - Check when $FUPRBTV Beta is released._
 
 * Add ability to use a blacklist of repos you know creates an issue when you upgrade to the next version.
 * Add ability to upgrade to final release too if beta is too risky for you.
-* Add check for if you are root or not, so you don't use sudo as root as it's not needed.
 * Add a flag for if you're doing a system update that you restart your services.
+* When Fedora 28 schedule is up I will do some testing to check that I fetch the right date, or any date at all.
 
 ### Changelog
+
+#### 2017-10-03
+* Before doing an upgrade a check for a decided date and if you have upgraded already is done, then default to a regular system update.
+* Checks if you are root or not, if not, sudo is added to update/upgrade commands.
 
 #### 2017-10-02
 * Released!
