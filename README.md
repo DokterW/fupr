@@ -2,15 +2,27 @@
 
 Inspired by [fedup](https://fedoraproject.org/wiki/FedUp) and my wish for Fedora releasing a rolling release option.
 
+It also makes keeping your system up to date a bit easier.
+
+Instead of typing _sudo dnf upgrade --refresh_, you just type _fupr update_.
+
+You can also forget about type
+_sudo dnf upgrade --refresh_
+_sudo dnf system-upgrade download --releasever=XX_
+_sudo dnf system-upgrade reboot_
+Just type _fupr upgrade_, and it also checks if a new released is available before it does the system upgrade. If not, it just updates the current version you have installed.
+
 For now it's just a simple tool to upgrade to the next Fedora Beta, do a system upgrade of your current version with the _--refresh_ flag and to check when the next Fedora Beta might be released.
 
 Read more about the risks of installing a beta [here](https://fedoraproject.org/wiki/Upgrading).
 
 _fupr <command>_
 
-_upgrade - Upgrade to $FUPRBTV Beta._
+_install - Install software_
 _update - Update $FUPROSV_
-_schedule - Check when $FUPRBTV Beta is released._
+_search - Search for packages_
+_upgrade - Upgrade to $FUPRBTV Beta_
+_schedule - Check when $FUPRBTV Beta is released_
 
 ### Roadmap
 
@@ -21,8 +33,11 @@ _schedule - Check when $FUPRBTV Beta is released._
 
 ### Changelog
 
+#### 2017-10-04
+* Added new commands, install & search, because why not.
+
 #### 2017-10-03
-* Before doing an upgrade a check for a decided date and if you have upgraded already is done, then default to a regular system update.
+* Before doing an upgrade a check for a decided date and if you have upgraded already, then default to a regular system update.
 * Checks if you are root or not, if not, sudo is added to update/upgrade commands.
 
 #### 2017-10-02
