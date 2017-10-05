@@ -33,6 +33,10 @@ _schedule - Check when $FUPRBTV Beta is released_
 
 ### Changelog
 
+#### 2017-10-05
+* You can now reload daemons after you have updated your system.
+* You can also upgrade a specific package/rpm.
+
 #### 2017-10-04
 * Added new commands, install & search, because why not.
 

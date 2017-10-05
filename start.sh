@@ -1,12 +1,12 @@
 #!/bin/bash
-# fupr v0.3
+# fupr v0.4
 # Made by Dr. Waldijk
 # Fedora Upgrader Redux makes it easier to keep your system updated and hassle free upgrade to the next beta release.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 FUPRNAM="fupr"
-FUPRVER="0.3"
+FUPRVER="0.4"
 FUPRCOM=$1
 FUPRSYN=$2
 FUPROSV=$(cat /etc/os-release | grep PRETTY | sed -r 's/.*"(.*) \(.*\)"/\1/')
@@ -24,19 +24,38 @@ if [[ -z "$FUPRCOM" ]]; then
     echo ""
     echo "    fupr <command> <syntax>"
     echo ""
-    echo "     install - Install software"
-    echo "      update - Update $FUPROSV"
-    echo "      search - Search for packages"
-    echo "     upgrade - Upgrade to $FUPRBTV"
-    echo "    schedule - Check when $FUPRBTV is released"
+    echo "install"
+    echo "    Install software"
+    echo "update"
+    echo "    Update $FUPROSV"
+    echo "update pkg-name"
+    echo "    Update specified package/rpm"
+    echo "update daemon"
+    echo "    Update $FUPROSV and reload daemon(s)"
+    echo "search"
+    echo "    Search for packages"
+    echo "upgrade"
+    echo "    Upgrade to $FUPRBTV"
+    echo "schedule"
+    echo "    Check when $FUPRBTV is released"
 elif [[ "$FUPRCOM" = "install" ]]; then
-    echo "[fupr] Updating $FUPROSV"
-    $FUPRSUDO dnf upgrade --refresh
     echo "[fupr] Installing software"
     $FUPRSUDO dnf install $FUPRSYN
 elif [[ "$FUPRCOM" = "update" ]]; then
-    echo "[fupr] Updating $FUPROSV"
-    $FUPRSUDO dnf upgrade --refresh
+    if [[ -z "$FUPRSYN" ]]; then
+        echo "[fupr] Updating $FUPROSV"
+        $FUPRSUDO dnf upgrade --refresh
+    elif [[ -z "$FUPRSYN" ]]; then
+        if [[ "$FUPRSYN" = "daemon" ]]; then
+            echo "[fupr] Updating $FUPROSV"
+            $FUPRSUDO dnf upgrade --refresh
+            echo "[FUPR] Reloading daemons"
+            $FUPRSUDO systemctl daemon-reload
+        else
+            echo "[fupr] Updating $FUPRSYN"
+            $FUPRSUDO dnf upgrade $FUPRSYN
+        fi
+    fi
 elif [[ "$FUPRCOM" = "search" ]]; then
     echo "[fupr] Search for packages"
     $FUPRSUDO dnf search $FUPRSYN
