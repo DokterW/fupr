@@ -16,13 +16,22 @@ For now it's just a simple tool to upgrade to the next Fedora Beta, do a system 
 
 Read more about the risks of installing a beta [here](https://fedoraproject.org/wiki/Upgrading).
 
-_fupr <command>_
+_fupr <command> <syntax>_
 
-_install - Install software_
-_update - Update $FUPROSV_
-_search - Search for packages_
-_upgrade - Upgrade to $FUPRBTV Beta_
-_schedule - Check when $FUPRBTV Beta is released_
+_install_
+    _Install software_
+_update_
+    _Update Fedora XX_
+_update pkg-name_
+    _Update specified package/rpm_
+_update daemon_
+    _Update Fedora XX and reload daemon(s)_
+_search_
+    _Search for packages_
+_upgrade_
+    _Upgrade to Fedora XX_
+_schedule_
+    _Check when Fedora XX is released_
 
 ### Roadmap
 
