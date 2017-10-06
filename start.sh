@@ -41,7 +41,7 @@ if [[ -z "$FUPRCOM" ]]; then
     echo "    Update specified package/rpm and reload daemon(s)"
     echo "search"
     echo "    Search for packages"
-    if [[ "$FUPROSV" = "$FUPRFEV" ]]; then
+    if [[ "$FUPROSV" != "$FUPRFEV" ]]; then
         echo "upgrade"
         echo "    Upgrade to $FUPRFEV"
         echo "schedule"
