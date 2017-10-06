@@ -2,21 +2,19 @@
 
 Inspired by [fedup](https://fedoraproject.org/wiki/FedUp) and my wish for Fedora releasing a rolling release option.
 
-It also makes keeping your system up to date a bit easier.
+fupr goes beyond what fedup was meant to do. It is more of an overlay of dnf to make it easier to keep your system up to date.
+
+*Read more about the risks of installing a beta [here](https://fedoraproject.org/wiki/Upgrading).*
 
 Instead of typing _sudo dnf upgrade --refresh_, you just type _fupr update_.
 
-You can also forget about type
+You can also forget about typing
 _sudo dnf upgrade --refresh_
 _sudo dnf system-upgrade download --releasever=XX_
 _sudo dnf system-upgrade reboot_
 Just type _fupr upgrade_, and it also checks if a new released is available before it does the system upgrade. If not, it just updates the current version you have installed.
 
-For now it's just a simple tool to upgrade to the next Fedora Beta, do a system upgrade of your current version with the _--refresh_ flag and to check when the next Fedora Beta might be released.
-
-Read more about the risks of installing a beta [here](https://fedoraproject.org/wiki/Upgrading).
-
-_fupr <command> <syntax>_
+_fupr <command> <args>_
 
 _install_
     _Install software_
@@ -24,8 +22,10 @@ _update_
     _Update Fedora XX_
 _update pkg-name_
     _Update specified package/rpm_
-_update daemon_
+_update_
     _Update Fedora XX and reload daemon(s)_
+_updated pkg-name_
+    _Update specified package/rpm and reload daemon(s)_
 _search_
     _Search for packages_
 _upgrade_
@@ -36,11 +36,16 @@ _schedule_
 ### Roadmap
 
 * Add ability to use a blacklist of repos you know creates an issue when you upgrade to the next version.
-* Add ability to upgrade to final release too if beta is too risky for you.
-* Add a flag for if you're doing a system update that you restart your services.
-* When Fedora 28 schedule is up I will do some testing to check that I fetch the right date, or any date at all.
+* Add ability to have a whitelist of specific packages you want to update with a certain command.
+* When Fedora 28 schedule is up I will do some testing to check that I fetch the right date, or any date at all (see below).
+* Add ability to upgrade to final release too if beta is too risky for you (when date syntax has been sorted).
 
 ### Changelog
+
+#### 2017-10-05
+* Separated regular update and update+reload daemon(s).
+* If you check the schedule when running the recent fedora release, instead of showing the release date it will just indicate you're already running the latest Fedora release.
+* Fixed the regex for filtering out the beta release date, so it locks to the exact date, not allowing it to be greedy. If no date is found, it will notify that accurately.
 
 #### 2017-10-05
 * You can now reload daemons after you have updated your system.
