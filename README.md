@@ -2,6 +2,14 @@
 
 Inspired by [fedup](https://fedoraproject.org/wiki/FedUp) and my wish for Fedora releasing a rolling release option.
 
+## How to install
+
+Install [doghum](https://github.com/DokterW/doghum)
+
+`doghum install fupr`
+
+## More about fupr
+
 fupr goes beyond what fedup was meant to do. It is more of an overlay of dnf to make it easier to keep your system up to date.
 
 *Read more about the risks of installing a beta [here](https://fedoraproject.org/wiki/Upgrading).*
@@ -9,29 +17,33 @@ fupr goes beyond what fedup was meant to do. It is more of an overlay of dnf to 
 Instead of typing _sudo dnf upgrade --refresh_, you just type _fupr update_.
 
 You can also forget about typing
-_sudo dnf upgrade --refresh_
-_sudo dnf system-upgrade download --releasever=XX_
-_sudo dnf system-upgrade reboot_
+```
+sudo dnf upgrade --refresh
+sudo dnf system-upgrade download --releasever=XX
+sudo dnf system-upgrade reboot
+```
 Just type _fupr upgrade_, and it also checks if a new released is available before it does the system upgrade. If not, it just updates the current version you have installed.
 
-_fupr <command> <args>_
+```
+fupr <command> <args>
 
-_install_
-    _Install software_
-_update_
-    _Update Fedora XX_
-_update pkg-name_
-    _Update specified package/rpm_
-_update_
-    _Update Fedora XX and reload daemon(s)_
-_updated pkg-name_
-    _Update specified package/rpm and reload daemon(s)_
-_search_
-    _Search for packages_
-_upgrade_
-    _Upgrade to Fedora XX_
-_schedule_
-    _Check when Fedora XX is released_
+install
+    Install software
+update
+    Update Fedora XX_
+update pkg-name
+    Update specified package/rpm
+update
+    Update Fedora XX and reload daemon(s)
+updated pkg-name
+    Update specified package/rpm and reload daemon(s)
+search
+    Search for packages
+upgrade
+    Upgrade to Fedora XX
+schedule
+    Check when Fedora XX is released
+```
 
 ### Roadmap
 

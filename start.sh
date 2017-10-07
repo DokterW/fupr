@@ -32,7 +32,7 @@ if [[ -z "$FUPRCOM" ]]; then
     echo "install pkg-name"
     echo "    Install software"
     echo "remove pkg-name"
-    echo "    Install software"
+    echo "    Remove software"
     echo "update"
     echo "    Update $FUPROSV"
     echo "update pkg-name"
