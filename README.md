@@ -42,7 +42,11 @@ _schedule_
 
 ### Changelog
 
-#### 2017-10-05
+#### 2017-10-07
+* Tweaked the code a bit.
+* Before upgrading, you will be asked if you want to go through with it.
+
+#### 2017-10-06
 * Separated regular update and update+reload daemon(s).
 * If you check the schedule when running the recent fedora release, instead of showing the release date it will just indicate you're already running the latest Fedora release.
 * Fixed the regex for filtering out the beta release date, so it locks to the exact date, not allowing it to be greedy. If no date is found, it will notify that accurately.
