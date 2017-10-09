@@ -1,12 +1,12 @@
 #!/bin/bash
-# fupr v0.7
+# fupr v0.8
 # Made by Dr. Waldijk
 # Fedora Upgrader Redux makes it easier to keep your system updated and hassle free upgrade to the next beta release.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 FUPRNAM="fupr"
-FUPRVER="0.7"
+FUPRVER="0.8"
 FUPRCOM=$1
 FUPRARG=$2
 FUPROSV=$(cat /etc/os-release | grep PRETTY | sed -r 's/.*"(.*) \(.*\)"/\1/')
@@ -41,6 +41,8 @@ if [[ -z "$FUPRCOM" ]]; then
     echo "    Update $FUPROSV and reload daemon(s)"
     echo "updated pkg-name"
     echo "    Update specified package/rpm and reload daemon(s)"
+    echo "check-update"
+    echo "    Check for updates"
     echo "search"
     echo "    Search for packages"
     if [[ "$FUPROSV" != "$FUPRFEV" ]]; then
@@ -83,6 +85,9 @@ elif [[ "$FUPRCOM" = "updated" ]]; then
         echo "[FUPR] Reloading daemons"
         $FUPRSUDO systemctl daemon-reload
     fi
+elif [[ "$FUPRCOM" = "check-update" ]]; then
+    echo "[fupr] Checking for updates"
+    $FUPRSUDO dnf check-update --refresh
 elif [[ "$FUPRCOM" = "search" ]]; then
     echo "[fupr] Search for packages"
     $FUPRSUDO dnf search $FUPRARG

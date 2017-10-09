@@ -30,13 +30,15 @@ fupr <command> <args>
 install
     Install software
 update
-    Update Fedora XX_
+    Update Fedora XX
 update pkg-name
     Update specified package/rpm
 update
     Update Fedora XX and reload daemon(s)
 updated pkg-name
     Update specified package/rpm and reload daemon(s)
+check-update
+    Check for updates
 search
     Search for packages
 upgrade
@@ -53,6 +55,9 @@ schedule
 * Add ability to upgrade to final release too if beta is too risky for you (when date syntax has been sorted).
 
 ### Changelog
+
+#### 2017-10-09
+* Added check-update.
 
 #### 2017-10-07
 * Tweaked the code a bit.
