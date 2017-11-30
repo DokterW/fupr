@@ -1,12 +1,12 @@
 #!/bin/bash
-# fupr v0.9
+# fupr v0.10
 # Made by Dr. Waldijk
 # Fedora Upgrader Redux makes it easier to keep your system updated and hassle free upgrade to the next beta release.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 FUPRNAM="fupr"
-FUPRVER="0.9"
+FUPRVER="0.10"
 FUPRCOM=$1
 FUPRARG=$2
 FUPROSV=$(cat /etc/os-release | grep PRETTY | sed -r 's/.*"Fedora ([0-9]{2}) \(.*\)"/\1/')
@@ -25,8 +25,6 @@ FUPRDMP=$(lynx -dump -nolist https://fedoraproject.org/wiki/Schedule)
 fuprfrv () {
     FUPRFEV=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E 'Fedora [0-9]{2} Schedule' | grep -E -o '[0-9]{2}')
     FUPRFVT=$(expr $FUPROSV + 1)
-    echo $FUPRFVT
-    echo $FUPRFEV
     if [[ $FUPRFVT -ne $FUPRFEV ]]; then
         FUPRFEV=$(expr $FUPRFEV - 1)
         FUPREOL="1"
