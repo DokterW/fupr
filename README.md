@@ -56,6 +56,11 @@ schedule
 
 ### Changelog
 
+#### 2017-11-30
+* Now fupr also checks for the Final Release release date (ff the final release has the same name as last schedule).
+* Tweaked it to speed up things. Fetching information from schedule only once instead of several times.
+* If You haven't upgraded to the latest and the Fedora Wiki has been updated, it will not try to skip a version when checking schedule and upgrading.
+
 #### 2017-10-09
 * Added check-update.
 
