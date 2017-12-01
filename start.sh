@@ -1,12 +1,12 @@
 #!/bin/bash
-# fupr v0.10
+# fupr v0.11
 # Made by Dr. Waldijk
 # Fedora Upgrader Redux makes it easier to keep your system updated and hassle free upgrade to the next beta release.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 FUPRNAM="fupr"
-FUPRVER="0.10"
+FUPRVER="0.11"
 FUPRCOM=$1
 FUPRARG=$2
 FUPROSV=$(cat /etc/os-release | grep PRETTY | sed -r 's/.*"Fedora ([0-9]{2}) \(.*\)"/\1/')
@@ -104,13 +104,17 @@ elif [[ "$FUPRCOM" = "search" ]]; then
     echo "[fupr] Search for packages"
     $FUPRSUDO dnf search $FUPRARG
 elif [[ "$FUPRCOM" = "upgrade" ]]; then
+    fuprfrv
     if [[ "$FUPREOL" = "0" ]]; then
         echo "[fupr] Checking release version"
         FUPRBTD=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2} Beta Release$' | grep -E -o '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
         FUPRFND=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2} Fedora [0-9]{2} Final Release \(GA\)$' | grep -E -o '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
+    else
+        FUPRBTD="6"
+        FUPRFND="6"
     fi
     if [[ -n "$FUPRBTD" ]]; then
-        fuprfrv
+        # fuprfrv
         if [[ "$FUPROSV" != "$FUPRFEV" ]]; then
             if [[ "$FUPREOL" = "0" ]]; then
                 echo "[fupr] Checking date"
@@ -120,7 +124,7 @@ elif [[ "$FUPRCOM" = "upgrade" ]]; then
                 FUPRDAT=$(date -d "$FUPRDAT" +%s)
             else
                 FUPRDAT="6"
-                FUPRBTU="6"
+                # FUPRBTU="6"
             fi
             if [[ "$FUPRDAT" -ge "$FUPRBTU" ]] && [[ -z "$FUPRFND" ]]; then
                 while :; do
