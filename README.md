@@ -29,6 +29,8 @@ fupr <command> <args>
 
 install
     Install software
+remove
+    Remove software
 update
     Update Fedora XX
 update pkg-name
@@ -51,10 +53,12 @@ schedule
 
 * Add ability to use a blacklist of repos you know creates an issue when you upgrade to the next version.
 * Add ability to have a whitelist of specific packages you want to update with a certain command.
-* When Fedora 28 schedule is up I will do some testing to check that I fetch the right date, or any date at all (see below).
-* Add ability to upgrade to final release too if beta is too risky for you (when date syntax has been sorted).
 
 ### Changelog
+
+#### 2017-01-26
+* Instead install you can write in, instead of update up, instead upgrade upg, instead search srch, instead of check-update chup, instead of schedule schd, instead remove rm.
+* Minor fixes.
 
 #### 2017-11-30
 * Now fupr also checks for the Final Release release date (ff the final release has the same name as last schedule).

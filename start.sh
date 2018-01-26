@@ -1,12 +1,12 @@
 #!/bin/bash
-# fupr v0.11
+# fupr v0.12
 # Made by Dr. Waldijk
 # Fedora Upgrader Redux makes it easier to keep your system updated and hassle free upgrade to the next beta release.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 FUPRNAM="fupr"
-FUPRVER="0.11"
+FUPRVER="0.12"
 FUPRCOM=$1
 FUPRARG=$2
 FUPROSV=$(cat /etc/os-release | grep PRETTY | sed -r 's/.*"Fedora ([0-9]{2}) \(.*\)"/\1/')
@@ -32,6 +32,15 @@ fuprfrv () {
 }
 # -----------------------------------------------------------------------------------
 if [[ -z "$FUPRCOM" ]]; then
+    echo "$FUPRNAM v$FUPRVER"
+    echo ""
+    echo "You are running Fedora $FUPROSV"
+    echo ""
+    echo "    fupr <command> <syntax>"
+    echo ""
+    echo "help"
+    echo "    List all commands"
+elif [[ "$FUPRCOM" = "help" ]]; then
     fuprfrv
     echo "$FUPRNAM v$FUPRVER"
     echo ""
@@ -63,21 +72,23 @@ if [[ -z "$FUPRCOM" ]]; then
             echo "    Check when Fedora $FUPRFEV is released"
         fi
     fi
-elif [[ "$FUPRCOM" = "install" ]]; then
+    echo "help"
+    echo "    List all commands (what you are viewing right now)"
+elif [[ "$FUPRCOM" = "install" ]] || [[ "$FUPRCOM" = "in" ]]; then
     if [[ -n "$FUPRARG" ]]; then
         echo "[fupr] Installing software"
         $FUPRSUDO dnf install $FUPRARG
     else
         echo "[fupr] Specify what you want to install"
     fi
-elif [[ "$FUPRCOM" = "remove" ]]; then
+elif [[ "$FUPRCOM" = "remove" ]] || [[ "$FUPRCOM" = "rm" ]]; then
     if [[ -n "$FUPRARG" ]]; then
         echo "[fupr] Removing software"
         $FUPRSUDO dnf remove $FUPRARG
     else
         echo "[fupr] Specify what you want to remove"
     fi
-elif [[ "$FUPRCOM" = "update" ]]; then
+elif [[ "$FUPRCOM" = "update" ]] || [[ "$FUPRCOM" = "up" ]]; then
     if [[ -z "$FUPRARG" ]]; then
         echo "[fupr] Updating Fedora $FUPROSV"
         $FUPRSUDO dnf upgrade --refresh
@@ -85,7 +96,7 @@ elif [[ "$FUPRCOM" = "update" ]]; then
         echo "[fupr] Updating Fedora $FUPROSV"
         $FUPRSUDO dnf upgrade $FUPRARG
     fi
-elif [[ "$FUPRCOM" = "updated" ]]; then
+elif [[ "$FUPRCOM" = "updated" ]] || [[ "$FUPRCOM" = "upd" ]]; then
     if [[ -z "$FUPRARG" ]]; then
         echo "[fupr] Updating Fedora $FUPROSV"
         $FUPRSUDO dnf upgrade --refresh
@@ -97,13 +108,13 @@ elif [[ "$FUPRCOM" = "updated" ]]; then
         echo "[FUPR] Reloading daemons"
         $FUPRSUDO systemctl daemon-reload
     fi
-elif [[ "$FUPRCOM" = "check-update" ]]; then
+elif [[ "$FUPRCOM" = "check-update" ]] || [[ "$FUPRCOM" = "chup" ]]; then
     echo "[fupr] Checking for updates"
     $FUPRSUDO dnf check-update --refresh
-elif [[ "$FUPRCOM" = "search" ]]; then
+elif [[ "$FUPRCOM" = "search" ]] || [[ "$FUPRCOM" = "srch" ]]; then
     echo "[fupr] Search for packages"
     $FUPRSUDO dnf search $FUPRARG
-elif [[ "$FUPRCOM" = "upgrade" ]]; then
+elif [[ "$FUPRCOM" = "upgrade" ]] || [[ "$FUPRCOM" = "upg" ]]; then
     fuprfrv
     if [[ "$FUPREOL" = "0" ]]; then
         echo "[fupr] Checking release version"
@@ -130,6 +141,7 @@ elif [[ "$FUPRCOM" = "upgrade" ]]; then
                 while :; do
                     echo "[fupr] Are you sure you want to upgrade from Fedora $FUPROSV to Fedora $FUPRFEV"
                     read -p "[fupr] (y/n) " -s -n1 FUPRKEY
+                    echo ""
                     case "$FUPRKEY" in
                         [yY])
                             break
@@ -153,6 +165,7 @@ elif [[ "$FUPRCOM" = "upgrade" ]]; then
                 while :; do
                     echo "[fupr] Are you sure you want to upgrade from Fedora $FUPROSV to Fedora $FUPRFEV"
                     read -p "[fupr] (y/n) " -s -n1 FUPRKEY
+                    echo ""
                     case "$FUPRKEY" in
                         [yY])
                             break
@@ -190,7 +203,7 @@ elif [[ "$FUPRCOM" = "upgrade" ]]; then
         echo "[fupr] Only doing an update of the system"
         $FUPRSUDO dnf upgrade --refresh
     fi
-elif [[ "$FUPRCOM" = "schedule" ]]; then
+elif [[ "$FUPRCOM" = "schedule" ]] || [[ "$FUPRCOM" = "schd" ]]; then
     echo "[fupr] Checking schedule"
     FUPRBTD=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2} Beta Release$' | grep -E -o '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
     FUPRFND=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2} Fedora [0-9]{2} Final Release \(GA\)$' | grep -E -o '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
