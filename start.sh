@@ -1,12 +1,12 @@
 #!/bin/bash
-# fupr v0.12
+# fupr v0.13
 # Made by Dr. Waldijk
 # Fedora Upgrader Redux makes it easier to keep your system updated and hassle free upgrade to the next beta release.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 FUPRNAM="fupr"
-FUPRVER="0.12"
+FUPRVER="0.13"
 FUPRCOM=$1
 FUPRARG=$2
 FUPROSV=$(cat /etc/os-release | grep PRETTY | sed -r 's/.*"Fedora ([0-9]{2}) \(.*\)"/\1/')
@@ -22,14 +22,6 @@ if [[ ! -f /usr/bin/lynx ]]; then
     $FUPRSUDO dnf -y install lynx
 fi
 FUPRDMP=$(lynx -dump -nolist https://fedoraproject.org/wiki/Schedule)
-fuprfrv () {
-    FUPRFEV=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E 'Fedora [0-9]{2} Schedule' | grep -E -o '[0-9]{2}')
-    FUPRFVT=$(expr $FUPROSV + 1)
-    if [[ $FUPRFVT -ne $FUPRFEV ]]; then
-        FUPRFEV=$(expr $FUPRFEV - 1)
-        FUPREOL="1"
-    fi
-}
 # -----------------------------------------------------------------------------------
 if [[ -z "$FUPRCOM" ]]; then
     echo "$FUPRNAM v$FUPRVER"
@@ -111,140 +103,46 @@ elif [[ "$FUPRCOM" = "updated" ]] || [[ "$FUPRCOM" = "upd" ]]; then
 elif [[ "$FUPRCOM" = "check-update" ]] || [[ "$FUPRCOM" = "chup" ]]; then
     echo "[fupr] Checking for updates"
     $FUPRSUDO dnf check-update --refresh
-elif [[ "$FUPRCOM" = "search" ]] || [[ "$FUPRCOM" = "srch" ]]; then
-    echo "[fupr] Search for packages"
+elif [[ "$FUPRCOM" = "search" ]] || [[ "$FUPRCOM" = "sr" ]]; then
+    echo "[fupr] Searching for package(s)"
     $FUPRSUDO dnf search $FUPRARG
 elif [[ "$FUPRCOM" = "upgrade" ]] || [[ "$FUPRCOM" = "upg" ]]; then
-    fuprfrv
-    if [[ "$FUPREOL" = "0" ]]; then
-        echo "[fupr] Checking release version"
-        FUPRBTD=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2} Beta Release$' | grep -E -o '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
-        FUPRFND=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2} Fedora [0-9]{2} Final Release \(GA\)$' | grep -E -o '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
-    else
-        FUPRBTD="6"
-        FUPRFND="6"
-    fi
-    if [[ -n "$FUPRBTD" ]]; then
-        # fuprfrv
-        if [[ "$FUPROSV" != "$FUPRFEV" ]]; then
-            if [[ "$FUPREOL" = "0" ]]; then
-                echo "[fupr] Checking date"
-                FUPRBTU=$(date -d "$FUPRBTD" +%s)
-                FUPRFNU=$(date -d "$FUPRFND" +%s)
-                FUPRDAT=$(TZ=UTC date +%Y-%m-%d)
-                FUPRDAT=$(date -d "$FUPRDAT" +%s)
-            else
-                FUPRDAT="6"
-                # FUPRBTU="6"
-            fi
-            if [[ "$FUPRDAT" -ge "$FUPRBTU" ]] && [[ -z "$FUPRFND" ]]; then
-                while :; do
-                    echo "[fupr] Are you sure you want to upgrade from Fedora $FUPROSV to Fedora $FUPRFEV"
-                    read -p "[fupr] (y/n) " -s -n1 FUPRKEY
-                    echo ""
-                    case "$FUPRKEY" in
-                        [yY])
-                            break
-                        ;;
-                        [nN])
-                            exit
-                        ;;
-                        *)
-                        echo "[fupr] Y for yes / N for no"
-                        sleep 3s
-                        ;;
-                    esac
-                done
-                echo "[fupr] Updating Fedora $FUPROSV"
-                $FUPRSUDO dnf upgrade --refresh
-                echo "[fupr] Upgrading to Fedora $FUPRFEV"
-                # FUPRFEV=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E 'Fedora [0-9]{2} Schedule' | grep -E -o '[0-9]{2}')
-                $FUPRSUDO dnf system-upgrade download --releasever=$FUPRFEV
-                $FUPRSUDO dnf system-upgrade reboot
-            elif [[ -z "$FUPRBTU" ]] && [[ "$FUPRDAT" -ge "$FUPRFNU" ]]; then
-                while :; do
-                    echo "[fupr] Are you sure you want to upgrade from Fedora $FUPROSV to Fedora $FUPRFEV"
-                    read -p "[fupr] (y/n) " -s -n1 FUPRKEY
-                    echo ""
-                    case "$FUPRKEY" in
-                        [yY])
-                            break
-                        ;;
-                        [nN])
-                            exit
-                        ;;
-                        *)
-                        echo "Y for yes / N for no"
-                        sleep 3s
-                        ;;
-                    esac
-                done
-                echo "[fupr] Updating Fedora  $FUPROSV"
-                $FUPRSUDO dnf upgrade --refresh
-                echo "[fupr] Upgrading to Fedora $FUPRFEV"
-                # FUPRFEV=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E 'Fedora [0-9]{2} Schedule' | grep -E -o '[0-9]{2}')
-                $FUPRSUDO dnf system-upgrade download --releasever=$FUPRFEV
-                $FUPRSUDO dnf system-upgrade reboot
-            else
-                # FUPRBTD=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2} Beta Release$' | grep -E -o '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
-                echo "[fupr] Fedora $FUPRFEV is not available until $FUPRBTD"
-                echo "[fupr] Only Fedora $FUPROSV will be updated"
-                $FUPRSUDO dnf upgrade --refresh
-            fi
-        else
-            # FUPRBTD=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2} Beta Release$' | grep -E -o '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
-            echo "[fupr] You have already upgraded to Fedora $FUPRFEV"
-            echo "[fupr] Only doing an update of the system"
-            $FUPRSUDO dnf upgrade --refresh
-        fi
+    FUPRFEV=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E 'Fedora [0-9]{2} Schedule' | grep -E -o '[0-9]{2}')
+    if [[ "$FUPROSV" != "$FUPRFEV" ]]; then
+        while :; do
+            echo "[fupr] Are you sure you want to upgrade from Fedora $FUPROSV to Fedora $FUPRFEV"
+            read -p "[fupr] (y/n) " -s -n1 FUPRKEY
+            echo ""
+            case "$FUPRKEY" in
+                [yY])
+                    break
+                ;;
+                [nN])
+                    exit
+                ;;
+                *)
+                echo "[fupr] Y for yes / N for no"
+                sleep 3s
+                ;;
+            esac
+        done
+        echo "[fupr] Updating Fedora $FUPROSV"
+        $FUPRSUDO dnf upgrade --refresh
+        echo "[fupr] Upgrading to Fedora $FUPRFEV"
+        # FUPRFEV=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E 'Fedora [0-9]{2} Schedule' | grep -E -o '[0-9]{2}')
+        $FUPRSUDO dnf system-upgrade download --releasever=$FUPRFEV
+        $FUPRSUDO dnf system-upgrade reboot
     else
         # FUPRBTD=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2} Beta Release$' | grep -E -o '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
-        echo "[fupr] No decided release date for Fedora $FUPRFEV yet"
+        echo "[fupr] You have already upgraded to Fedora $FUPRFEV"
         echo "[fupr] Only doing an update of the system"
         $FUPRSUDO dnf upgrade --refresh
     fi
 elif [[ "$FUPRCOM" = "schedule" ]] || [[ "$FUPRCOM" = "schd" ]]; then
     echo "[fupr] Checking schedule"
-    FUPRBTD=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2} Beta Release$' | grep -E -o '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
-    FUPRFND=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2} Fedora [0-9]{2} Final Release \(GA\)$' | grep -E -o '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
-    fuprfrv
-    if [[ -n "$FUPRBTD" ]] && [[ -z "$FUPRFND" ]]; then
-        if [[ "$FUPROSV" != "$FUPRFEV" ]]; then
-            # FUPRFEV=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E 'Fedora [0-9]{2} Schedule' | grep -E -o '[0-9]{2}')
-            # FUPRBTD=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2} Beta Release$' | grep -E -o '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
-            FUPRBTU=$(date -d "$FUPRBTD" +%s)
-            FUPRDAT=$(TZ=UTC date +%Y-%m-%d)
-            FUPRDAT=$(date -d "$FUPRDAT" +%s)
-            if [[ "$FUPRDAT" -lt "$FUPRBTU" ]]; then
-                # FUPRBTD=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2} Beta Release$' | grep -E -o '^[0-9]{4}-[0-9]{2}-[0-9]{2}')
-                echo "Fedora $FUPRFEV Beta is scheduled for release on $FUPRBTD."
-                echo "Fedora $FUPRFEV Final Release has no release date yet."
-            elif [[ "$FUPRDAT" -ge "$FUPRBTU" ]]; then
-                echo "Fedora $FUPRFEV Beta has been released."
-                echo "Fedora $FUPRFEV Final Release has no release date yet."
-            fi
-        else
-            echo "[fupr] You have already upgraded to Fedora $FUPRFEV"
-        fi
-    elif [[ -n "$FUPRBTD" ]] && [[ -n "$FUPRFND" ]]; then
-        if [[ "$FUPROSV" != "$FUPRFEV" ]]; then
-            # FUPRFEV=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E 'Fedora [0-9]{2} Schedule' | grep -E -o '[0-9]{2}')
-            FUPRBTU=$(date -d "$FUPRBTD" +%s)
-            FUPRFNU=$(date -d "$FUPRFND" +%s)
-            FUPRDAT=$(TZ=UTC date +%Y-%m-%d)
-            FUPRDAT=$(date -d "$FUPRDAT" +%s)
-            if [[ "$FUPRDAT" -lt "$FUPRFNU" ]]; then
-                echo "Fedora $FUPRFEV Beta has been released."
-                echo "Fedora $FUPRFEV Final Release is scheduled for release on $FUPRFND."
-            elif [[ "$FUPRDAT" -ge "$FUPRFNU" ]]; then
-                echo "Fedora $FUPRFEV Final Release has been released."
-            fi
-        else
-            echo "[fupr] You have already upgraded to Fedora $FUPRFEV"
-        fi
-    else
-        echo "[fupr] No official release date for Fedora $FUPRFEV yet"
-    fi
+    FUPRSCHED=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2}.*Release' | tail -n +2)
+    echo "[fupr] You are running Fedora $FUPROSV"
+    echo "$FUPRSCHED"
 else
     echo "[fupr] $FUPRCOM was not recognised"
 fi

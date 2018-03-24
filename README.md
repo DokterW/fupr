@@ -56,8 +56,11 @@ schedule
 
 ### Changelog
 
+#### 2017-03-24
+* For the last two or three release Fedora has change how they name Beta and Final Release in their schedule. I have now removed the schedule checker. It will only show the dates from the schedule dump. Also, when doing a release upgrade it's up to you to know if it has been released or not, no check will be done. This feature might be re-added if schedule for 28 and 29 uses the same labelling.
+
 #### 2017-01-26
-* Instead install you can write in, instead of update up, instead upgrade upg, instead search srch, instead of check-update chup, instead of schedule schd, instead remove rm.
+* Instead install you can write in, instead of update up, instead upgrade upg, instead search ~~srch~~ sr, instead of check-update chup, instead of schedule schd, instead remove rm.
 * Minor fixes.
 
 #### 2017-11-30
