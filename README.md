@@ -48,13 +48,20 @@ upgrade
 schedule
     Check when Fedora XX is released
 ```
+~~schedule~~
+    ~~Check when Fedora XX is released~~
 
 ### Roadmap
 
 * Add ability to use a blacklist of repos you know creates an issue when you upgrade to the next version.
 * Add ability to have a whitelist of specific packages you want to update with a certain command.
+* Add flatpak support.
+* Add [doghum](https://github.com/DokterW/doghum) support.
 
 ### Changelog
+
+#### 2017-05-12
+* Removed schedule feature. fupr will be much faster now as it won't fetch from the schedule page.
 
 #### 2017-03-24
 * For the last two or three release Fedora has change how they name Beta and Final Release in their schedule. I have now removed the schedule checker. It will only show the dates from the schedule dump. Also, when doing a release upgrade it's up to you to know if it has been released or not, no check will be done. This feature might be re-added if schedule for 28 and 29 uses the same labelling.
