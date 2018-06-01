@@ -1,12 +1,12 @@
 #!/bin/bash
-# fupr v0.14
+# fupr v0.15
 # Made by Dr. Waldijk
 # Fedora Upgrader Redux makes it easier to keep your system updated and hassle free upgrade to the next beta release.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 FUPRNAM="fupr"
-FUPRVER="0.14"
+FUPRVER="0.15"
 FUPRCOM=$1
 FUPRARG=$2
 FUPRSUB=$3
@@ -42,6 +42,7 @@ elif [[ "$FUPRCOM" = "help" ]]; then
     echo ""
     echo "    fupr <command> <syntax>"
     echo ""
+    echo "DNF"
     echo "install pkg-name"
     echo "    Install software"
     echo "remove pkg-name"
@@ -58,6 +59,19 @@ elif [[ "$FUPRCOM" = "help" ]]; then
     echo "    Check for updates"
     echo "search"
     echo "    Search for packages"
+    echo ""
+    echo "Flatpak"
+    echo ""
+    echo "finstall pkg-name"
+    echo "    Install package"
+    echo "fremove pkg-name"
+    echo "    Removes package"
+    echo "fupdate"
+    echo "    Updates package(s)"
+    echo "fsearch"
+    echo "    Search for package"
+    echo "fadd name repo-url"
+    echo "    Adds remote repo"
 #    if [[ "$FUPROSV" != "$FUPRFEV" ]]; then
 #        echo "upgrade"
 #        echo "    Upgrade to Fedora $FUPRFEV"
@@ -68,6 +82,7 @@ elif [[ "$FUPRCOM" = "help" ]]; then
 #    fi
     echo "help"
     echo "    List all commands (what you are viewing right now)"
+# DNF
 elif [[ "$FUPRCOM" = "install" ]] || [[ "$FUPRCOM" = "in" ]]; then
     if [[ -n "$FUPRARG" ]]; then
         echo "[fupr] Installing software"
@@ -141,15 +156,43 @@ elif [[ "$FUPRCOM" = "upgrade" ]] || [[ "$FUPRCOM" = "upg" ]]; then
         echo "[fupr] Only doing an update of the system"
         $FUPRSUDO dnf upgrade --refresh
     fi
+# Flatpak
+elif [[ "$FUPRCOM" = "finstall" ]] || [[ "$FUPRCOM" = "fin" ]]; then
+    echo "[fupr flatpak] Installing flatpak"
+    if [[ -n "$FUPRARG" ]]; then
+        FUPRFRP=$(flatpak remotes | head -n +2 | sed -r 's/\t/,/' | cut -d , -f 1)
+        flatpak install $FUPRFRP $FUPRARG
+    else
+        echo "[fupr flatpak] Specify what you want to install"
+    fi
+elif [[ "$FUPRCOM" = "fupgrade" ]] || [[ "$FUPRCOM" = "fup" ]]; then
+    echo "[fupr flatpak] Updating flatpak"
+    if [[ -n "$FUPRARG" ]]; then
+        flatpak update $FUPRARG
+    else
+        flatpak update
+    fi
+elif [[ "$FUPRCOM" = "fremove" ]] || [[ "$FUPRCOM" = "frm" ]]; then
+    echo "[fupr flatpak] Removing flatpak"
+    if [[ -n "$FUPRARG" ]]; then
+        flatpak uninstall $FUPRARG
+    else
+        echo "[fupr flatpak] Specify what you want to uninstall"
+    fi
+elif [[ "$FUPRCOM" = "fsearch" ]] || [[ "$FUPRCOM" = "fsr" ]]; then
+    echo "[fupr flatpak] Searching flatpaks"
+    flatpak search $FUPRARG
+elif [[ "$FUPRCOM" = "fadd" ]] || [[ "$FUPRCOM" = "fa" ]]; then
+    echo "[fupr flatpak] Adding flatpak repo"
+    flatpak remote-add --if-not-exists $FUPRARG $FUPRSUB
+# Dokter
+elif [[ "$FUPRCOM" = "dokter" ]] || [[ "$FUPRCOM" = "dr" ]]; then
+    continue
 #elif [[ "$FUPRCOM" = "schedule" ]] || [[ "$FUPRCOM" = "schd" ]]; then
 #    echo "[fupr] Checking schedule"
 #    FUPRSCHED=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2}.*Release' | tail -n +2)
 #    echo "[fupr] You are running Fedora $FUPROSV"
 #    echo "$FUPRSCHED"
-elif [[ "$FUPRARG" = "flatpak" ]] || [[ "$FUPRARG" = "fp" ]]; then
-    continue
-elif [[ "$FUPRARG" = "dokter" ]] || [[ "$FUPRARG" = "dr" ]]; then
-    continue
 else
     echo "[fupr] $FUPRCOM was not recognised"
 fi
