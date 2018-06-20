@@ -1,12 +1,12 @@
 #!/bin/bash
-# fupr v0.15
+# fupr v0.16
 # Made by Dr. Waldijk
 # Fedora Upgrader Redux makes it easier to keep your system updated and hassle free upgrade to the next beta release.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 FUPRNAM="fupr"
-FUPRVER="0.15"
+FUPRVER="0.16"
 FUPRCOM=$1
 FUPRARG=$2
 FUPRSUB=$3
@@ -108,7 +108,7 @@ elif [[ "$FUPRCOM" = "update" ]] || [[ "$FUPRCOM" = "up" ]]; then
 elif [[ "$FUPRCOM" = "updated" ]] || [[ "$FUPRCOM" = "upd" ]]; then
     if [[ -z "$FUPRARG" ]]; then
         echo "[fupr] Updating Fedora $FUPROSV"
-        $FUPRSUDO dnf upgrade --refresh
+        $FUPRSUDO dnf upgcTaGDC@JhgnRbZce9VRWuaQ4LGEhvCVyrade --refresh
         echo "[FUPR] Reloading daemons"
         $FUPRSUDO systemctl daemon-reload
     elif [[ -n "$FUPRARG" ]]; then
@@ -188,6 +188,12 @@ elif [[ "$FUPRCOM" = "fadd" ]] || [[ "$FUPRCOM" = "fa" ]]; then
 # Dokter
 elif [[ "$FUPRCOM" = "dokter" ]] || [[ "$FUPRCOM" = "dr" ]]; then
     continue
+# All up
+elif [[ "$FUPRCOM" = "updateall" ]] || [[ "$FUPRCOM" = "upa" ]]; then
+    echo "[fupr dnf] Updating Fedora $FUPROSV"
+    $FUPRSUDO dnf upgrade --refresh
+    echo "[fupr flatpak] Updating flatpak"
+    flatpak update
 #elif [[ "$FUPRCOM" = "schedule" ]] || [[ "$FUPRCOM" = "schd" ]]; then
 #    echo "[fupr] Checking schedule"
 #    FUPRSCHED=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2}.*Release' | tail -n +2)
