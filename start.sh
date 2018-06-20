@@ -108,7 +108,7 @@ elif [[ "$FUPRCOM" = "update" ]] || [[ "$FUPRCOM" = "up" ]]; then
 elif [[ "$FUPRCOM" = "updated" ]] || [[ "$FUPRCOM" = "upd" ]]; then
     if [[ -z "$FUPRARG" ]]; then
         echo "[fupr] Updating Fedora $FUPROSV"
-        $FUPRSUDO dnf upgcTaGDC@JhgnRbZce9VRWuaQ4LGEhvCVyrade --refresh
+        $FUPRSUDO dnf upgrade --refresh
         echo "[FUPR] Reloading daemons"
         $FUPRSUDO systemctl daemon-reload
     elif [[ -n "$FUPRARG" ]]; then
