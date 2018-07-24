@@ -1,12 +1,12 @@
 #!/bin/bash
-# fupr v0.17
+# fupr v0.18
 # Made by Dr. Waldijk
 # Fedora Upgrader Redux makes it easier to keep your system updated and hassle free upgrade to the next beta release.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 FUPRNAM="fupr"
-FUPRVER="0.17"
+FUPRVER="0.18"
 FUPRCOM=$1
 FUPRARG=$2
 FUPRSUB=$3
