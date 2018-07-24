@@ -1,29 +1,52 @@
 #!/bin/bash
-# fupr v0.16
+# fupr v0.17
 # Made by Dr. Waldijk
 # Fedora Upgrader Redux makes it easier to keep your system updated and hassle free upgrade to the next beta release.
 # Read the README.md for more info, but you will find more info here below.
 # By running this script you agree to the license terms.
 # Config ----------------------------------------------------------------------------
 FUPRNAM="fupr"
-FUPRVER="0.16"
+FUPRVER="0.17"
 FUPRCOM=$1
 FUPRARG=$2
 FUPRSUB=$3
 FUPROSV=$(cat /etc/os-release | grep PRETTY | sed -r 's/.*"Fedora ([0-9]{2}) \(.*\)"/\1/')
 FUPRUSR=$(whoami)
 FUPREOL="0"
+FUPRRPN=".x86_64.rpm"
+FUPRBSN="start.sh"
 if [[ "$FUBRUSR" != "root" ]]; then
     FUPRSUDO="sudo"
 fi
 if [[ ! -f /usr/lib/systemd/system/dnf-system-upgrade.service ]]; then
     $FUPRSUDO dnf -y install dnf-plugin-system-upgrade
 fi
-#if [[ ! -f /usr/bin/lynx ]]; then
-#    $FUPRSUDO dnf -y install lynx
-#fi
-#FUPRDMP=$(lynx -dump -nolist https://fedoraproject.org/wiki/Schedule)
 # Function --------------------------------------------------------------------------
+fuprchk () {
+    # Check if it's a bash script or a rpm.
+    FUPRBSH=$(curl -s --connect-timeout 10 https://raw.githubusercontent.com/DokterW/fupr/master/fuprbsh)
+    FUPRRPM=$(curl -s --connect-timeout 10 https://raw.githubusercontent.com/DokterW/fupr/master/fuprrpm)
+    FUPRCHK1=$(echo "$FUPRBSH" | cut -d , -f 1 | tr '[:upper:]' '[:lower:]' | grep $FUPRARG)
+    FUPRCHK2=$(echo "$FUPRRPM" | cut -d , -f 1 | tr '[:upper:]' '[:lower:]' | grep $FUPRARG)
+}
+fuprurlverfetch () {
+    if [[ "$FUPRARG" = "$FUPRCHK1" ]]; then
+        # Regex out the version.
+        FUPRLTS=$(curl -ILs -o /dev/null -w %{url_effective} --connect-timeout 10 https://github.com/DokterW/$FUPRARG/releases/latest | egrep -o '([0-9]{1,2}\.)*[0-9]{1,2}')
+    elif [[ "$FUPRARG" = "$FUPRCHK2" ]]; then
+        # Fetch latest version URL.
+        FUPRURL=$(curl -ILs -o /dev/null -w %{url_effective} --connect-timeout 10 https://github.com/$FUPRARG/$FUPRARG/releases/latest)
+        # Same as above, but regex out the version.
+        FUPRLTS=$(curl -ILs -o /dev/null -w %{url_effective} --connect-timeout 10 https://github.com/$FUPRARG/$FUPRARG/releases/latest | egrep -o '([0-9]{1,2}\.)*[0-9]{1,2}')
+    fi
+}
+fuprbashdl () {
+    # Download bash script and make it an executable if it's not.
+    wget -q -N --show-progress https://raw.githubusercontent.com/DokterW/$FUPRARG/master/$FUPRBSN -P $HOME/.dokter/$FUPRARG/
+    if [[ ! -x $HOME/.dokter/$FUPRARG/$FUPRBSN ]]; then
+        chmod +x $HOME/.dokter/$FUPRARG/$FUPRBSN
+    fi
+}
 # -----------------------------------------------------------------------------------
 if [[ -z "$FUPRCOM" ]]; then
     echo "$FUPRNAM v$FUPRVER"
@@ -35,7 +58,6 @@ if [[ -z "$FUPRCOM" ]]; then
     echo "help"
     echo "    List all commands"
 elif [[ "$FUPRCOM" = "help" ]]; then
-    fuprfrv
     echo "$FUPRNAM v$FUPRVER"
     echo ""
     echo "You are running Fedora $FUPROSV"
@@ -72,6 +94,15 @@ elif [[ "$FUPRCOM" = "help" ]]; then
     echo "    Search for package"
     echo "fadd name repo-url"
     echo "    Adds remote repo"
+    echo ""
+    echo "Dokter's bash script"
+    echo ""
+    echo "dinstall pkg-name"
+    echo "    Install package"
+    echo "dupdate"
+    echo "    Updates package(s)"
+    echo "dlist"
+    echo "    List package"
 #    if [[ "$FUPROSV" != "$FUPRFEV" ]]; then
 #        echo "upgrade"
 #        echo "    Upgrade to Fedora $FUPRFEV"
@@ -186,19 +217,90 @@ elif [[ "$FUPRCOM" = "fadd" ]] || [[ "$FUPRCOM" = "fa" ]]; then
     echo "[fupr flatpak] Adding flatpak repo"
     flatpak remote-add --if-not-exists $FUPRARG $FUPRSUB
 # Dokter
-elif [[ "$FUPRCOM" = "dokter" ]] || [[ "$FUPRCOM" = "dr" ]]; then
-    continue
+elif [[ "$FUPRCOM" = "dinstall" ]] || [[ "$FUPRCOM" = "din" ]]; then
+    fuprchk
+    if [[ -z "$FUPRCHK1" ]] && [[ -z "$FUPRCHK2" ]]; then
+        echo "$FUPRARG is not available."
+        echo "Type 'dogum list' to get a list of available scripts and software."
+    elif [[ "$FUPRARG" = "$FUPRCHK1" ]]; then
+        if [[ ! -d $HOME/.dokter/$FUPRARG ]]; then
+            mkdir $HOME/.dokter/$FUPRARG
+            fuprbashdl
+            echo "alias $FUPRARG='$HOME/.dokter/$FUPRARG/$FUPRBSN'" >> $HOME/.bashrc
+            source ~/.bashrc
+            # Adding alias so user don't need to restart terminal.
+            # It does not work. I will fix that later.
+            # alias $FUPRARG='$HOME/.dokter/$FUPRARG/$FUPRBSN'
+        else
+            echo "You cannot install a bash script that is already installed."
+        fi
+    elif [[ "$FUPRARG" = "$FUPRCHK2" ]]; then
+        if [[ ! -d $HOME/.dokter/$FUPRARG ]]; then
+            fuprurlverfetch
+            # Download URL
+            FUPRDLD="https://github.com/$FUPRARG/$FUPRARG/releases/download/v"
+            wget -q --show-progress $FUPRDLD$FUPRLTS/$FUPRARG$FUPRRPN -P /tmp/
+            sudo dnf -y install /tmp/$FUPRARG$FUPRRPN
+            rm /tmp/$FUPRARG$FUPRRPN
+        else
+            echo "You cannot install software that is already installed."
+        fi
+    fi
+elif [[ "$FUPRCOM" = "dupgrade" ]] || [[ "$FUPRCOM" = "dup" ]]; then
+    fuprchk
+    if [[ -z "$FUPRCHK1" ]] && [[ -z "$FUPRCHK2" ]]; then
+        echo "$FUPRARG is not available."
+        echo "Type 'dogum list' to get a list of available scripts and software."
+    elif [[ "$FUPRARG" = "$FUPRCHK1" ]]; then
+        if [[ -d $HOME/.dokter/$FUPRARG ]]; then
+            fuprurlverfetch
+            FUPRIND=$(cat $HOME/.dokter/$FUPRARG/$FUPRBSN | sed -n "2p" | egrep -o '([0-9]{1,2}\.)*[0-9]{1,2}')
+            if [[ "$FUPRLTS" != "$FUPRIND" ]]; then
+                if [[ "$FUPRARG" = "fupr" ]]; then
+                    wget -q -N --show-progress https://raw.githubusercontent.com/DokterW/fupr/master/upgrade_fupr.sh -P $HOME/.dokter/fupr/
+                    chmod +x $HOME/.dokter/fupr/upgrade_fupr.sh
+                    exec $HOME/.dokter/fupr/upgrade_fupr.sh
+                else
+                    fuprbashdl
+                fi
+            else
+                echo "You already have the latest version of $FUPRARG v$FUPRLTS installed."
+            fi
+        else
+            echo "You cannot update a bash script that is not installed."
+        fi
+    elif [[ "$FUPRARG" = "$FUPRCHK2" ]]; then
+        if [[ -e /bin/$FUPRARG ]]; then
+            fuprurlverfetch
+            # Download URL
+            FUPRDLD="https://github.com/$FUPRARG/$FUPRARG/releases/download/v"
+            # Fetch version of installed software.
+            FUPRIND=$(dnf info $FUPRARG | grep Version | egrep -o '([0-9]{1,2}\.)*[0-9]{1,2}')
+            if [ "$FUPRLTS" != "$FUPRIND" ]; then
+                # Download, upgrade & remove d/l file
+                wget -q --show-progress $FUPRDLD$FUPRLTS/$FUPRARG$FUPRRPN -P /tmp/
+                sudo dnf -y upgrade /tmp/$FUPRARG$FUPRRPN
+                rm /tmp/$FUPRARG$FUPRRPN
+            else
+                echo "You already have the latest version of $FUPRARG v$FUPRLTS installed."
+            fi
+        else
+            echo "You cannot update software that is not installed."
+        fi
+    fi
+elif [[ "$FUPRCOM" = "dlist" ]] || [[ "$FUPRCOM" = "dls" ]]; then
+    FUPRBSH=$(curl -s --connect-timeout 10 https://raw.githubusercontent.com/DokterW/fupr/master/fuprbsh)
+    # FUPRRPM=$(curl -s --connect-timeout 10 https://raw.githubusercontent.com/DokterW/fupr/master/fuprrpm)
+    echo $FUPRNAM v$FUPRVER
+    echo ""
+    # echo "$FUPRRPM" | cut -d , -f 1,2 | sed 's/,/ - /g'
+    echo "$FUPRBSH" | cut -d , -f 1,2 | sed 's/,/ - /g'
 # All up
 elif [[ "$FUPRCOM" = "updateall" ]] || [[ "$FUPRCOM" = "upa" ]]; then
     echo "[fupr dnf] Updating Fedora $FUPROSV"
     $FUPRSUDO dnf upgrade --refresh
     echo "[fupr flatpak] Updating flatpak"
     flatpak update
-#elif [[ "$FUPRCOM" = "schedule" ]] || [[ "$FUPRCOM" = "schd" ]]; then
-#    echo "[fupr] Checking schedule"
-#    FUPRSCHED=$(echo "$FUPRDMP" | sed -r 's/^\s+//g' | grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2}.*Release' | tail -n +2)
-#    echo "[fupr] You are running Fedora $FUPROSV"
-#    echo "$FUPRSCHED"
 else
     echo "[fupr] $FUPRCOM was not recognised"
 fi

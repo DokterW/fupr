@@ -4,13 +4,19 @@ Inspired by [fedup](https://fedoraproject.org/wiki/FedUp) and my wish for Fedora
 
 ## How to install
 
-Install [doghum](https://github.com/DokterW/doghum)
+`wget https://raw.githubusercontent.com/DokterW/fupr/master/install_doghum.sh`
 
-`doghum install fupr`
+`chmod +x install_fupr.sh`
+
+`./install_fupr.sh`
 
 ## More about fupr
 
 fupr goes beyond what fedup was meant to do. It is more of an overlay of dnf to make it easier to keep your system up to date.
+
+Additionally it also has support for flatpak and [doghum](https://github.com/DokterW/doghum) has been merged with fupr.
+
+*fupr will eventually change name soon-ish. I just need to do some more testing and tweaking.*
 
 *Read more about the risks of installing a beta [here](https://fedoraproject.org/wiki/Upgrading).*
 
@@ -45,11 +51,9 @@ search
     Search for packages
 upgrade
     Upgrade to Fedora XX
-schedule
-    Check when Fedora XX is released
+help
+    List all commands for dnf, flatpak and doghum.
 ```
-~~schedule~~
-    ~~Check when Fedora XX is released~~
 
 ### Roadmap
 
