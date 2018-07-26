@@ -2,9 +2,13 @@
 
 Inspired by [fedup](https://fedoraproject.org/wiki/FedUp) and my wish for Fedora releasing a rolling release option.
 
+# fupr has reached EOL
+
+# Go and use [dupr](https://github.com/DokterW/dupr) instead.
+
 ## How to install
 
-`wget https://raw.githubusercontent.com/DokterW/fupr/master/install_doghum.sh`
+`wget https://raw.githubusercontent.com/DokterW/fupr/master/install_fupr.sh`
 
 `chmod +x install_fupr.sh`
 
@@ -60,9 +64,12 @@ help
 * Add ability to use a blacklist of repos you know creates an issue when you upgrade to the next version.
 * Add ability to have a whitelist of specific packages you want to update with a certain command.
 * Add flatpak support.
-* Add [doghum](https://github.com/DokterW/doghum) support.
+* change name to remove fedora from the name.
 
 ### Changelog
+
+#### 2017-07-24
+* Added (partial) doghum support
 
 #### 2017-05-12
 * Removed schedule feature. fupr will be much faster now as it won't fetch from the schedule page.
